@@ -1,0 +1,48 @@
+.sidebar {
+    transition: all 0.3s ease;
+}
+
+.sidebar-collapsed {
+    width: 70px;
+}
+
+.sidebar-collapsed .nav-text {
+    display: none;
+}
+
+.sidebar-collapsed .logo-text {
+    display: none;
+}
+
+.sidebar-collapsed .nav-item {
+    justify-content: center;
+}
+
+.content-area {
+    transition: all 0.3s ease;
+}
+
+.content-expanded {
+    margin-left: 70px;
+}
+
+.active-nav {
+    background-color: #e5e7eb;
+    border-left: 4px solid #3b82f6;
+}
+
+.page-transition {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
