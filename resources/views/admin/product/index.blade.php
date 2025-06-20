@@ -2,16 +2,23 @@
 
 @section('content')
     <div class="page-transition" id="products-page">
-        <div class="flex items-center justify-between mb-6">
+        <div class="flex flex-wrap items-center justify-between mb-6 gap-2">
             <h1 class="text-2xl font-bold text-gray-800">Product Management</h1>
-            <a href="{{ route('products.create') }}"
-                class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 inline-flex items-center">
-                <i class="fas fa-plus mr-2"></i> Add Product
-            </a>
+            <div class="flex gap-2">
+                <a href="{{ route('products.invoice') }}" target="_blank"
+                    class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 inline-flex items-center">
+                    <i class="fas fa-file-pdf mr-2"></i> Export PDF
+                </a>
+                <a href="{{ route('products.create') }}"
+                    class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 inline-flex items-center">
+                    <i class="fas fa-plus mr-2"></i> Add Product
+                </a>
+            </div>
         </div>
 
         <!-- ✅ Search & Filter Form -->
-        <form method="GET" action="{{ route('products.index') }}" class="mb-6 flex flex-col md:flex-row items-center gap-4">
+        <form method="GET" action="{{ route('products.index') }}"
+            class="mb-6 flex flex-col md:flex-row items-center gap-4">
             <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by name or codebar"
                 class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full md:w-64" />
             <select name="category_id"

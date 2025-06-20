@@ -13,12 +13,7 @@
             <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by name or mobile"
                 class="w-full md:w-64 px-4 py-2 border rounded shadow-sm focus:ring-blue-500 focus:border-blue-500" />
 
-            <select name="user_id" class="px-4 py-2 border rounded focus:ring-blue-500 focus:border-blue-500">
-                <option value="">All Users</option>
-                @foreach($users as $user)
-                    <option value="{{ $user->id }}" @selected(request('user_id') == $user->id)>{{ $user->name }}</option>
-                @endforeach
-            </select>
+
 
             <button type="submit" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">
                 Filter

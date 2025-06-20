@@ -16,18 +16,20 @@
             </a>
 
             <!-- تغيير الحالة -->
-            <form action="{{ route('orders.update', $order->id) }}" method="POST">
-                @csrf
-                @method('PUT')
-                <select name="status" onchange="this.form.submit()"
-                    class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition">
-                    @foreach (['pending', 'processing', 'shipped', 'delivered', 'cancelled'] as $status)
-                        <option value="{{ $status }}" {{ $order->status == $status ? 'selected' : '' }}>
-                            {{ ucfirst($status) }}
-                        </option>
-                    @endforeach
-                </select>
-            </form>
+            <form action="{{ route('orders.updateStatus', $order->id) }}" method="POST" class="inline-block">
+    @csrf
+    <select name="status"
+            onchange="this.form.submit()"
+            class="cursor-pointer px-4 py-2 bg-blue-600 text-white rounded-md shadow-sm
+                   hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+            aria-label="Change order status">
+        @foreach (['pending', 'processing', 'shipped', 'delivered', 'cancelled'] as $status)
+            <option value="{{ $status }}" {{ $order->status == $status ? 'selected' : '' }}>
+                {{ ucfirst($status) }}
+            </option>
+        @endforeach
+    </select>
+</form>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
@@ -65,7 +67,7 @@
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <div class="text-sm font-medium text-gray-900">
                                                 {{ $item->product->name ?? 'N/A' }}</div>
-                                            <div class="text-sm text-gray-500">SKU: {{ $item->product->sku ?? 'N/A' }}</div>
+
                                         </td>
                                         <td class="px-6 py-4 text-sm text-gray-500">{{ number_format($item->price, 2) }} DZD
                                         </td>

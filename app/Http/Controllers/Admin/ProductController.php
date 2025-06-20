@@ -10,6 +10,9 @@ use App\Models\Product;
 use App\Models\Category;
 use App\Models\Discount;
 
+use Barryvdh\DomPDF\Facade\Pdf;
+use Milon\Barcode\Facades\DNS1D;
+
 class ProductController extends Controller
 {
     /**
@@ -207,6 +210,15 @@ class ProductController extends Controller
         $product->delete();
 
         return redirect()->route('products.index')->with('success', 'Product deleted successfully.');
+    }
+
+
+
+    public function invoice()
+    {
+        $products = Product::where('user_id', auth()->id())->get();
+        $pdf = PDF::loadView('admin.product.invoice', compact('products'));
+        return $pdf->stream('products_invoice.pdf');
     }
 }
 

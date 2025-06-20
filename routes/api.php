@@ -20,4 +20,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-Route::get('/product/by-barcode/{barcode}', [ProductApiController::class, 'getByBarcode']);
+Route::get('/product/barcode/{barcode}', [ProductApiController::class, 'getByBarcode']);

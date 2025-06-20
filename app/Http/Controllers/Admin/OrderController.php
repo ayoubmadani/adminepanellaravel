@@ -16,21 +16,19 @@ class OrderController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Order::with('customer');
+        $query = Order::with('customer')
+            ->where('user_id', auth()->id()); // ✅ عرض الطلبات الخاصة بالمستخدم فقط
 
-        // فلترة باسم العميل
         if ($request->filled('customer')) {
             $query->whereHas('customer', function ($q) use ($request) {
                 $q->where('name', 'like', '%' . $request->customer . '%');
             });
         }
 
-        // فلترة بالحالة
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
-        // فلترة بالتاريخ
         if ($request->filled('date')) {
             $query->whereDate('created_at', $request->date);
         }
@@ -69,54 +67,55 @@ class OrderController extends Controller
 
 
 
-    public function store(Request $request)
-    {
-        // dd($request->all());
-        // التحقق من البيانات
-        $request->validate([
-            'customer_id' => 'required|exists:customers,id',
-            'products' => 'required|array|min:1',
-            'products.*.price' => 'required|numeric|min:0',
-            'products.*.quantity' => 'required|integer|min:1',
-        ]);
+   public function store(Request $request)
+{
+    // تحقق من صحة البيانات
+    $request->validate([
+        'customer_id' => 'required|exists:customers,id',
+        'items' => 'required|array|min:1',
+        'items.*.product_id' => 'required|exists:products,id',
+        'items.*.price' => 'required|numeric|min:0',
+        'items.*.quantity' => 'required|integer|min:1',
+    ]);
 
-        $totalAmount = 0;
+    $totalAmount = 0;
 
-        // حساب المبلغ الإجمالي
-        foreach ($request->products as $item) {
-            $totalAmount += $item['price'] * $item['quantity'];
-        }
-
-        // إنشاء الطلب
-        $order = Order::create([
-            'user_id' => auth()->id(),
-            'customer_id' => $request->customer_id,
-            'status' => 'pending',
-            'amount' => $totalAmount,
-            'date' => Carbon::now()->toDateTimeString(),
-            'amount' => $totalAmount,
-        ]);
-
-
-        // إضافة المنتجات (عناصر الطلب)
-        foreach ($request->products as $item) {
-            $order->items()->create([
-                'product_id' => $item['product_id'],
-                'price' => $item['price'],
-                'quantity' => $item['quantity'],
-                'order_id' => $order->id, // ✅ المفتاح الأساسي للطلب الجديد
-            ]);
-        }
-
-        return redirect()->route('orders.index')->with('success', 'تم إنشاء الطلب بنجاح.');
+    foreach ($request->items as $item) {
+        $totalAmount += $item['price'] * $item['quantity'];
     }
 
+    // إنشاء الطلب
+    $order = Order::create([
+        'user_id' => auth()->id(),
+        'customer_id' => $request->customer_id,
+        'status' => 'pending',
+        'amount' => $totalAmount,
+        'date' => Carbon::now()->toDateTimeString(),
+    ]);
 
-    public function show($id)
+    // إضافة عناصر الطلب
+    foreach ($request->items as $item) {
+        $order->items()->create([
+            'product_id' => $item['product_id'],
+            'price' => $item['price'],
+            'quantity' => $item['quantity'],
+        ]);
+    }
+
+    return redirect()->route('orders.index')->with('success', 'تم إنشاء الطلب بنجاح.');
+}
+
+
+    public function show(Order $order)
     {
-        $order = Order::with(['customer', 'items.product'])->findOrFail($id);
+        if ($order->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $order->load(['customer', 'items.product']);
         return view('admin.order.show', compact('order'));
     }
+
 
 
     public function edit(Order $order)
@@ -128,6 +127,7 @@ class OrderController extends Controller
 
    public function update(Request $request, Order $order)
     {
+        // dd($request->all());
         // التحقق من صحة البيانات
         $request->validate([
             'products' => 'required|array|min:1',
@@ -163,6 +163,31 @@ class OrderController extends Controller
         }
 
         return redirect()->route('orders.index')->with('success', 'تم تحديث الطلب بنجاح.');
+    }
+
+    public function updateStatus(Request $request, Order $order)
+    {
+        $request->validate([
+            'status' => 'required|in:pending,processing,shipped,delivered,cancelled',
+        ]);
+
+        $order->status = $request->status;
+        $order->save();
+
+        return redirect()->back()->with('success', 'تم تحديث حالة الطلب بنجاح.');
+    }
+
+    public function destroy($id)
+    {
+        $order = Order::findOrFail($id);
+
+        // حذف العناصر التابعة للطلب إن وجدت
+        $order->items()->delete();
+
+        // حذف الطلب
+        $order->delete();
+
+        return redirect()->route('orders.index')->with('success', 'Order deleted successfully.');
     }
 
     public function invoice(Order $order)

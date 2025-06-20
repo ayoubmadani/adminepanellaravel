@@ -12,32 +12,26 @@ class CustomerController extends Controller
 
     public function index(Request $request)
     {
-        $query = Customer::query();
+    $query = Customer::query();
 
-        // بحث بالاسم أو رقم الهاتف
-        if ($request->filled('search')) {
-            $query->where(function ($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->search . '%')
+    // تصفية حسب المستخدم الحالي
+    $query->where('user_id', Auth::id()); // هذا السطر يضمن عرض العملاء فقط للمستخدم المسجل
+
+    // بحث بالاسم أو رقم الهاتف
+    if ($request->filled('search')) {
+        $query->where(function ($q) use ($request) {
+            $q->where('name', 'like', '%' . $request->search . '%')
                 ->orWhere('mobile', 'like', '%' . $request->search . '%');
-            });
+        });
+    }
+
+    $customers = $query->withCount([
+        'orders as cancelled_orders_count' => function ($query) {
+            $query->where('status', 'Cancelled');
         }
+    ])->paginate(10);
 
-
-
-        // فلترة حسب user_id
-        if ($request->filled('user_id')) {
-            $query->where('user_id', $request->user_id);
-        }
-
-        $customers = Customer::withCount([
-            'orders as cancelled_orders_count' => function ($query) {
-                $query->where('status', 'Cancelled');
-            }
-        ])->paginate(10);
-
-        $users = User::all(); // هذا هو المتغير المطلوب
-
-        return view('admin.customer.index', compact('customers', 'users'));
+    return view('admin.customer.index', compact('customers'));
     }
 
     public function create()

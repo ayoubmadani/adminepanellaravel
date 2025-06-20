@@ -19,7 +19,10 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/dashboards', [DashboardController::class, 'index'])->name('admin.dashboard');
 
         // product
+        Route::get('products/invoice', [ProductController::class, 'invoice'])->name('products.invoice');
         Route::resource('products', ProductController::class);
+
+
 
 
         // categories
@@ -32,7 +35,8 @@ Route::middleware(['auth'])->group(function () {
 
         // orders
         Route::resource('orders', OrderController::class);
-        Route::POST('orders/updateStutes/{id}', [OrderController::class, 'updateStutes'])->name('orders.updateStutes');
+        Route::post('orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
+
         // web.php
         Route::get('/orders/{order}/invoice', [OrderController::class, 'invoice'])->name('admin.orders.invoice.pdf');
 
@@ -48,7 +52,10 @@ Route::middleware(['auth'])->group(function () {
     });
 });
 
-Route::get('/product/barcode/{barcode}', [ProductApiController::class, 'getByBarcode']);
+
+
+
+
 
 // Route::prefix('admin')->group(function () {
 //     // dashbord

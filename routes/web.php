@@ -14,9 +14,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::redirect('/', '/login');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -28,6 +26,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+use App\Http\Controllers\Site\ProductController as SiteProductController;
+
+Route::get('/products', [SiteProductController::class, 'index'])->name('site.products.index');
+Route::get('/product/barcode/{codebar}', [SiteProductController::class, 'barcode']);
 
 require __DIR__.'/admin.php';
 require __DIR__.'/auth.php';
