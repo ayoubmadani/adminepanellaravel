@@ -4,6 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+use App\Models\Product;
+use App\Models\Category;
+use App\Models\Discount;
 
 class DiscountController extends Controller
 {
@@ -14,7 +19,8 @@ class DiscountController extends Controller
      */
     public function index()
     {
-        return view('admin.discount');
+        $discounts = Discount::where('user_id', auth()->id())->paginate(10); // ✅ paginate وليس all()
+        return view('admin.discount.index', compact('discounts'));
     }
 
     /**
@@ -24,7 +30,8 @@ class DiscountController extends Controller
      */
     public function create()
     {
-        return view('admin.discount.addDiscount');
+        
+        return view('admin.discount.create');
     }
 
     /**
@@ -35,7 +42,27 @@ class DiscountController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+        $request->validate([
+            'name' => 'required|string',
+            'discount' => 'required|string',
+            'description' => 'nullable|string',
+            'dateBegin' => 'required|date',
+            'dateFin' => 'required|date',
+            'status' => 'required|string',
+        ]);
+
+        Discount::create([
+            'name' => $request->name,
+            'discount' => $request->discount,
+            'description' => $request->description,
+            'datebegin' => $request->dateBegin,
+            'datefin' => $request->dateFin,
+            'status' => $request->status === 'active' ? 1 : 0,
+            'user_id' => Auth::id(),
+        ]);
+
+        return redirect()->route('discounts.index')->with('success', 'Discount added successfully.');
     }
 
     /**
@@ -44,9 +71,9 @@ class DiscountController extends Controller
      * @param  \App\Models\discount  $discount
      * @return \Illuminate\Http\Response
      */
-    public function show(discount $discount)
+    public function show(Discount $discount)
     {
-        //
+        return view('admin.discounts.show', compact('discount'));
     }
 
     /**
@@ -55,9 +82,9 @@ class DiscountController extends Controller
      * @param  \App\Models\discount  $discount
      * @return \Illuminate\Http\Response
      */
-    public function edit(discount $discount)
+    public function edit(Discount $discount)
     {
-        //
+        return view('admin.discount.edit', compact('discount'));
     }
 
     /**
@@ -67,9 +94,18 @@ class DiscountController extends Controller
      * @param  \App\Models\discount  $discount
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, discount $discount)
+    public function update(Request $request, Discount $discount)
     {
-        //
+        $discount->update([
+            'name' => $request->name,
+            'discount' => $request->discount,
+            'description' => $request->description,
+            'datebegin' => $request->dateBegin,
+            'datefin' => $request->dateFin,
+            'status' => $request->status,
+        ]);
+
+        return redirect()->route('discounts.index')->with('success', 'Discount updated successfully!');
     }
 
     /**
@@ -78,9 +114,10 @@ class DiscountController extends Controller
      * @param  \App\Models\discount  $discount
      * @return \Illuminate\Http\Response
      */
-    public function destroy(discount $discount)
+    public function destroy(Discount $discount)
     {
-        //
+        $discount->delete();
+        return redirect()->route('discounts.index')->with('success', 'Discount deleted successfully.');
     }
 }
 

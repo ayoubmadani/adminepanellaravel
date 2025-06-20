@@ -10,7 +10,7 @@
         <ul class="space-y-2">
             <li>
                 <a class="nav-item flex items-center p-2 text-gray-700 rounded-lg hover:bg-gray-100 transition duration-200"
-                    href="{{ route('admin.index') }}" onclick="showPage('dashboard')">
+                    href="{{ route('admin.dashboard') }}" onclick="showPage('dashboard')">
                     <i class="fas fa-tachometer-alt w-5 text-gray-500"></i>
                     <span class="nav-text ml-3">Dashboard</span>
                 </a>
@@ -38,14 +38,14 @@
             </li>
             <li>
                 <a class="nav-item flex items-center p-2 text-gray-700 rounded-lg hover:bg-gray-100 transition duration-200"
-                    href="{{ route('admin.orders') }}" onclick="showPage('orders')">
+                    href="{{ route('orders.index') }}" onclick="showPage('orders')">
                     <i class="fas fa-shopping-cart w-5 text-gray-500"></i>
                     <span class="nav-text ml-3">Orders</span>
                 </a>
             </li>
             <li>
                 <a class="nav-item flex items-center p-2 text-gray-700 rounded-lg hover:bg-gray-100 transition duration-200"
-                    href="{{ route('admin.settings') }}" onclick="showPage('settings')">
+                    href="{{ route('settings.index') }}" onclick="showPage('settings')">
                     <i class="fas fa-cog w-5 text-gray-500"></i>
                     <span class="nav-text ml-3">Settings</span>
                 </a>
@@ -63,7 +63,7 @@
             </li>
             <li>
                 <a class="nav-item flex items-center p-2 text-gray-700 rounded-lg hover:bg-gray-100 transition duration-200"
-                    href="#">
+                    href="{{ route('customers.index') }}">
                     <i class="fas fa-users w-5 text-gray-500"></i>
                     <span class="nav-text ml-3">Customers</span>
                 </a>

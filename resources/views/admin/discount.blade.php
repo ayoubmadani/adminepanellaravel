@@ -3,9 +3,11 @@
     <div class="page-transition" id="categories-page">
         <div class="flex items-center justify-between mb-6">
             <h1 class="text-2xl font-bold text-gray-800">Discount Management</h1>
-            <button class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
-                <i class="fas fa-plus mr-2"></i> Add Discount
-            </button>
+            <a href="{{ route('discounts.create') }}">
+                <button class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+                    <i class="fas fa-plus mr-2"></i> Add Discount
+                </button>
+            </a>
         </div>
 
         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 mb-6">
@@ -43,61 +45,44 @@
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
-                        <tr>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="flex items-center">
-                                        <div class="text-sm font-medium text-gray-900">Ramadan</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="flex items-center">
-                                        <div class="text-sm font-medium text-gray-900">40 %</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Devices and gadgets for
-                                everyday use
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2025-6-25 / 2025-8-1</td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <span
-                                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Active</span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                <button class="text-blue-500 hover:text-blue-700 mr-2"><i class="fas fa-edit"></i>
-                                </button>
-                                <button class="text-red-500 hover:text-red-700"><i class="fas fa-trash"></i></button>
-                            </td>
-                        </tr>
-                         <tr>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="flex items-center">
-                                        <div class="text-sm font-medium text-gray-900">Ramadan</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="flex items-center">
-                                        <div class="text-sm font-medium text-gray-900">40 %</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Devices and gadgets for
-                                everyday use
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2025-6-25 / 2025-8-1</td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <span
-                                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Active</span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                <button class="text-blue-500 hover:text-blue-700 mr-2"><i class="fas fa-edit"></i>
-                                </button>
-                                <button class="text-red-500 hover:text-red-700"><i class="fas fa-trash"></i></button>
-                            </td>
-                        </tr>
+                        @foreach ($discounts as $discount)
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-gray-900">{{ $discount->name }}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-gray-900">{{ $discount->discount }} %</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $discount->description }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {{ $discount->datebegin }} / {{ $discount->datefin }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span
+                                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+            {{ $discount->status == 1 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                        {{ $discount->status == 1 ? 'Active' : 'Inactive' }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    <a href="{{ route('discounts.edit', $discount->id) }}"
+                                        class="text-blue-500 hover:text-blue-700 mr-2">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <form action="{{ route('discounts.destroy', $discount->id) }}" method="POST"
+                                        class="inline-block" onsubmit="return confirm('Are you sure?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="text-red-500 hover:text-red-700">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @endforeach
                     </tbody>
+
                 </table>
             </div>
 
@@ -123,3 +108,5 @@
         </div>
     </div>
 @endsection
+{{-- git config --global user.email "ayoubbansalah123456@gmail.com"
+https://github.com/ayoubmadani/adminepanellaravel.git --}}
